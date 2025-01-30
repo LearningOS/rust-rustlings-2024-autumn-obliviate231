@@ -6,17 +6,22 @@
 // Execute `rustlings hint iterators2` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
-
 // Step 1.
 // Complete the `capitalize_first` function.
 // "hello" -> "Hello"
 pub fn capitalize_first(input: &str) -> String {
-    let mut c = input.chars();
-    match c.next() {
-        None => String::new(),
-        Some(first) => ???,
+    let mut capitalized = String::new();
+    let mut flag = true;
+    let mut chars = input.chars();
+    for c in chars{
+        if flag {
+            capitalized.push(c.to_uppercase().next().unwrap());
+            flag = false;
+        }else{
+            capitalized.push(c);
+        }
     }
+    capitalized
 }
 
 // Step 2.
@@ -24,7 +29,22 @@ pub fn capitalize_first(input: &str) -> String {
 // Return a vector of strings.
 // ["hello", "world"] -> ["Hello", "World"]
 pub fn capitalize_words_vector(words: &[&str]) -> Vec<String> {
-    vec![]
+    let mut result = Vec::new();
+    for word in words {
+        let mut chars = word.chars();
+        let mut capitalized = String::new();
+        let mut flag = true;
+        for c in chars{
+            if flag {
+                capitalized.push(c.to_uppercase().next().unwrap());
+                flag = false;
+            }else{
+                capitalized.push(c);
+            }
+        }
+        result.push(capitalized);
+    }
+    result
 }
 
 // Step 3.
@@ -32,7 +52,23 @@ pub fn capitalize_words_vector(words: &[&str]) -> Vec<String> {
 // Return a single string.
 // ["hello", " ", "world"] -> "Hello World"
 pub fn capitalize_words_string(words: &[&str]) -> String {
-    String::new()
+    let mut result = String::new();
+    for word in words {
+        let mut chars = word.chars();
+        let mut capitalized = String::new();
+        let mut flag = true;
+        for c in chars{
+            if flag {
+                capitalized.push(c.to_uppercase().next().unwrap());
+                flag = false;
+            }else{
+                capitalized.push(c);
+            }
+        }
+        result.push_str(&capitalized);
+        // result = result + &capitalized.to_string();
+    }
+    result
 }
 
 #[cfg(test)]
