@@ -2,7 +2,6 @@
 	queue
 	This question requires you to use queues to implement the functionality of the stac
 */
-// I AM NOT DONE
 
 #[derive(Debug)]
 pub struct Queue<T> {
@@ -61,21 +60,46 @@ pub struct myStack<T>
 impl<T> myStack<T> {
     pub fn new() -> Self {
         Self {
-			//TODO
-			q1:Queue::<T>::new(),
-			q2:Queue::<T>::new()
+            q1: Queue::<T>::new(),
+            q2: Queue::<T>::new(),
         }
     }
+
     pub fn push(&mut self, elem: T) {
-        //TODO
+        // 哪个队列非空就往哪个队列添加元素，如果都为空默认往 q1 添加
+        if self.q2.is_empty() {
+            self.q1.enqueue(elem);
+        } else {
+            self.q2.enqueue(elem);
+        }
     }
+
     pub fn pop(&mut self) -> Result<T, &str> {
-        //TODO
-		Err("Stack is empty")
+        // 先找到非空队列和空队列
+        let (mut non_empty_queue, mut empty_queue) = if self.q1.is_empty() {
+            (&mut self.q2, &mut self.q1)
+        } else {
+            (&mut self.q1, &mut self.q2)
+        };
+
+        // 若栈为空，返回错误
+        if non_empty_queue.is_empty() {
+            return Err("Stack is empty");
+        }
+
+        // 将非空队列中除最后一个元素外的其他元素转移到空队列
+        while non_empty_queue.size() > 1 {
+            let elem = non_empty_queue.dequeue().unwrap();
+            empty_queue.enqueue(elem);
+        }
+
+        // 弹出非空队列的最后一个元素
+        return non_empty_queue.dequeue();
     }
+
     pub fn is_empty(&self) -> bool {
-		//TODO
-        true
+        // 当两个队列都为空时，栈为空
+        self.q1.is_empty() && self.q2.is_empty()
     }
 }
 

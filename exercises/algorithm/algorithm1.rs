@@ -2,7 +2,6 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -69,15 +68,48 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
-	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+    pub fn merge(mut list_a: LinkedList<T>, mut list_b: LinkedList<T>) -> Self
+    where
+        T: Ord,
+    {
+        let mut merged_list = Self::new();
+        let mut cur_a = list_a.start;
+        let mut cur_b = list_b.start;
+
+        while cur_a.is_some() || cur_b.is_some() {
+            match (cur_a, cur_b) {
+                (Some(a), Some(b)) => {
+                    let a_val = unsafe { &(*a.as_ptr()).val };
+                    let b_val = unsafe { &(*b.as_ptr()).val };
+                    if a_val <= b_val {
+                        cur_a = unsafe { (*a.as_ptr()).next };
+                        let node = unsafe { Box::from_raw(a.as_ptr()) };
+                        merged_list.add(node.val);
+                        cur_b = Some(b);
+                    } else {
+                        cur_b = unsafe { (*b.as_ptr()).next };
+                        let node = unsafe { Box::from_raw(b.as_ptr()) };
+                        merged_list.add(node.val);
+                        cur_a = Some(a);
+                    }
+                }
+                (Some(a), None) => {
+                    cur_a = unsafe { (*a.as_ptr()).next };
+                    let node = unsafe { Box::from_raw(a.as_ptr()) };
+                    merged_list.add(node.val);
+                }
+                (None, Some(b)) => {
+                    cur_b = unsafe { (*b.as_ptr()).next };
+                    let node = unsafe { Box::from_raw(b.as_ptr()) };
+                    merged_list.add(node.val);
+                }
+                (None, None) => break,
+            }
         }
-	}
+
+        merged_list
+    }
+
 }
 
 impl<T> Display for LinkedList<T>

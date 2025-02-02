@@ -3,7 +3,6 @@
 	This question requires you to use a stack to achieve a bracket match
 */
 
-// I AM NOT DONE
 #[derive(Debug)]
 struct Stack<T> {
 	size: usize,
@@ -31,8 +30,12 @@ impl<T> Stack<T> {
 		self.size += 1;
 	}
 	fn pop(&mut self) -> Option<T> {
-		// TODO
-		None
+        if self.is_empty() {
+            None
+        } else {
+            self.size -= 1;
+            self.data.pop()
+        }
 	}
 	fn peek(&self) -> Option<&T> {
 		if 0 == self.size {
@@ -99,10 +102,57 @@ impl<'a, T> Iterator for IterMut<'a, T> {
 	}
 }
 
-fn bracket_match(bracket: &str) -> bool
-{
-	//TODO
-	true
+fn bracket_match(bracket: &str) -> bool {
+    let mut stack = Stack::new();
+    for (i, c) in bracket.chars().enumerate() {
+        println!("Processing character '{}' at position {}", c, i);
+        match c {
+            '(' | '[' | '{' => {
+                stack.push(c);
+                println!("Pushed '{}' to stack. Current stack: {:?}", c, stack.data);
+            }
+            ')' => {
+                if let Some(top) = stack.pop() {
+                    if top != '(' {
+                        println!("Mismatch: expected '(', found '{}' at position {}", top, i);
+                        return false;
+                    }
+                    println!("Popped '(' from stack. Current stack: {:?}", stack.data);
+                } else {
+                    println!("No matching '(' for ')' at position {}", i);
+                    return false;
+                }
+            }
+            ']' => {
+                if let Some(top) = stack.pop() {
+                    if top != '[' {
+                        println!("Mismatch: expected '[', found '{}' at position {}", top, i);
+                        return false;
+                    }
+                    println!("Popped '[' from stack. Current stack: {:?}", stack.data);
+                } else {
+                    println!("No matching '[' for ']' at position {}", i);
+                    return false;
+                }
+            }
+            '}' => {
+                if let Some(top) = stack.pop() {
+                    if top != '{' {
+                        println!("Mismatch: expected '{{', found '{}' at position {}", top, i);
+                        return false;
+                    }
+                    println!("Popped '{{' from stack. Current stack: {:?}", stack.data);
+                } else {
+                    println!("No matching '{{' for '}}' at position {}", i);
+                    return false;
+                }
+            }
+            _ => continue,
+        }
+    }
+    let result = stack.is_empty();
+    println!("Final stack state: {:?}, Result: {}", stack.data, result);
+    result
 }
 
 #[cfg(test)]
